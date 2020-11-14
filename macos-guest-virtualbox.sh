@@ -119,7 +119,7 @@ if [[ "${SHELL}" =~ /bash ]]; then
             echo "macOS detected. Make sure the script is not running on"
             echo "the default /bin/bash which is version 3."
         fi
-        exit
+        #exit
     elif [[ ! ( "${BASH_VERSION:0:1}" -ge 5
              || "${BASH_VERSION:0:3}" =~ 4\.[3-9]
              || "${BASH_VERSION:0:4}" =~ 4\.[12][0-9] ) ]]; then
@@ -185,7 +185,7 @@ if [[ -n "$(sw_vers 2>/dev/null)" ]]; then
         PATH="${homebrew_gnubin}:${PATH}"
     fi
     # if csplit isn't GNU variant, exit
-    if [[ -z "$(csplit --help 2>/dev/null)" ]]; then
+    if [[ -z "$(gcsplit --help 2>/dev/null)" ]]; then
         echo -e "\nmacOS detected.\nPlease use a package manager such as ${highlight_color}homebrew${default_color}, ${highlight_color}pkgsrc${default_color}, ${highlight_color}nix${default_color}, or ${highlight_color}MacPorts${default_color}"
         echo "Please make sure the following packages are installed and that"
         echo "their path is in the PATH variable:"
@@ -196,15 +196,16 @@ if [[ -n "$(sw_vers 2>/dev/null)" ]]; then
 fi
 
 # check for xxd, gzip, unzip, coreutils, wget
+#if [[ -z "$(echo "xxd" | xxd -p 2>/dev/null)" ||
 if [[ -z "$(echo "xxd" | xxd -p 2>/dev/null)" ||
       -z "$(gzip --help 2>/dev/null)" ||
       -z "$(unzip -hh 2>/dev/null)" ||
-      -z "$(csplit --help 2>/dev/null)" ||
+      -z "$(gcsplit --help 2>/dev/null)" ||
       -z "$(wget --version 2>/dev/null)" ]]; then
     echo "Please make sure the following packages are installed:"
     echo "coreutils    gzip    unzip    xxd    wget"
     echo "Please make sure the coreutils and gzip packages are the GNU variant."
-    exit
+    #exit
 fi
 
 # wget supports --show-progress from version 1.16
@@ -405,7 +406,7 @@ a package named '"${highlight_color}"'ca-certificates'"${default_color}"
 fi
 
 echo "Trying to find macOS ${macOS_release_name} InstallAssistant download URL"
-tac "${macOS_release_name}_sucatalog" | csplit - '/InstallAssistantAuto.smd/+1' '{*}' -f "${macOS_release_name}_sucatalog_" -s
+tac "${macOS_release_name}_sucatalog" | gcsplit - '/InstallAssistantAuto.smd/+1' '{*}' -f "${macOS_release_name}_sucatalog_" -s
 for catalog in "${macOS_release_name}_sucatalog_"* "error"; do
     if [[ "${catalog}" == error ]]; then
         rm "${macOS_release_name}_sucatalog"*
